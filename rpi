@@ -1,0 +1,42 @@
+
+#write raspbian to SD card on rdisk3
+sudo diskutil unmount /Volumes/Untitled/ && sudo dd if=/Users/tewing/Downloads/2012-12-16-wheezy-raspbian.img of=/dev/rdisk3 bs=1m  
+
+say "card ready" 
+
+echo -n "Boot raspberrypi and hit ener to continue"
+read NULL
+
+# remove known host entry for hostname raspberrypi
+ ssh-keygen -R raspberrypi
+
+# put my keypair on the machine
+cat ~tewing/.ssh/id_dsa.pub | sshpass -p raspberry ssh  -o UserKnownHostsFile=/dev/null   -o StrictHostKeyChecking=no  pi@raspberrypi "cat >/tmp/authorized_keys && sudo mkdir ~root/.ssh && sudo mv /tmp/authorized_keys ~root/.ssh/authorized_keys && sudo  chown -R root:root ~root/.ssh"
+
+ssh root@raspberrypi "/usr/sbin/userdel -rf pi"
+
+scp ~/rpi/raspi-config root@raspberrypi:/var/tmp
+
+ssh root@raspberrypi "/var/tmp/raspi-config"
+
+echo -n "Hostname: "
+read HOSTNAME
+echo $HOSTNAME | ssh root@raspberrypi "cat >/etc/hostname"
+
+ssh root@raspberrypi "reboot"
+
+echo sleeping 3 minutes
+echo "1..."
+sleep 60
+echo "2..."
+sleep 60
+echo "3..."
+sleep 60
+ 
+ssh-keygen -R $HOSTNAME
+
+ssh root@$HOSTNAME "apt-get update ; apt-get upgrade -f -y --force-yes"
+
+say "upgrade complete"
+
+
