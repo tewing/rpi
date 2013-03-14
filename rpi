@@ -1,6 +1,6 @@
 
 #write raspbian to SD card on rdisk3
-sudo diskutil unmount /Volumes/Untitled/ && sudo dd if=/Users/tewing/Downloads/2012-12-16-wheezy-raspbian.img of=/dev/rdisk3 bs=1m  
+sudo diskutil unmount /Volumes/Untitled/ && sudo dd if=/Users/tewing/Downloads/2013-02-09-wheezy-raspbian.img of=/dev/rdisk3 bs=1m  
 
 say "card ready" 
 
@@ -35,7 +35,8 @@ sleep 60
  
 ssh-keygen -R $HOSTNAME
 
-ssh root@$HOSTNAME "apt-get update ; apt-get upgrade -f -y --force-yes"
+#ssh root@$HOSTNAME "apt-get update"
+##ssh root@$HOSTNAME "apt-get upgrade -f -y --force-yes"
 
 say "upgrade complete"
 
